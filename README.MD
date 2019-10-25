@@ -1,0 +1,20 @@
+# FLESHFLIP
+
+FLESHFLIP IS THE ALL NEW INNOVATIVE GAMBLING BOT BUILT IN RIGHT IN TO YOUR PC! WOW MAGIC
+
+## Installation
+
+DOWNLOAD THE FILE TO YOUR DESKTOP
+
+```bash
+THEN LAUNCH IT WOW!
+```
+
+## Usage
+
+``HEADS FOR HEADS``
+``TAILS FOR TAILS``
+``BALANCE FOR BALANCE``
+``FAUCET FOR FAUCET``
+## License
+[SHIT](https://www.southharmoninstituteoftechnology.org/)
