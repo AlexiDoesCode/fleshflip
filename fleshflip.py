@@ -1,5 +1,7 @@
 import random
 import sys
+import math
+
 
 #coinflip
 bet = 0
@@ -40,56 +42,37 @@ print("Show the list of commands by inputting 'help'")
 while game_started == True:
         
         #STARTUP   
-        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake"):
+        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake", "crash", "dice"):
                 mode = input("> ")
         if mode == "help":
                 print("Commands: ")
+                print("--- COINFLIP ---")
                 print("heads - chooses the heads side")
                 print("tails - chooses the tails side")
-                print("balance - shows your balance, and amount of owned shares")
-                print("faucet - get free 1000 bits added to your balance")
-                print("invest - invest in to the Fleshflip Bankroll")
-                print("stats - show the stats")
-                print("help - show this page")
-                print("stake - shows the stake of your investment")
-                mode = None
-        try:
-                if (int(bet)> int(maxBet)):
-                                print("You cannot bet more than ",maxBet," bits")
-                                mode = None
-        except(ValueError):
                 print("")
-        try:
-                #CHOOSE YOUR BET AMOUNT
-                if mode == "tails" or mode == "heads":
-                    bet = input("What is your bet? ")
-                else:
-                    print("")
-        except(ValueError):
-                print("Refrain from using letters, or other symbols, when asked for a numerical value.")
-
+                print("--- CRASH ---")
+                print("crash - pick a multiplier from 1.01x to 1000x")
+                print("")
+                print("--- DICE ---")
+                print("dice - pick a multiplier from 1 to 1000 (no decimals)")
+                print("")
+                print("--- BANKROLL ---")
+                print("balance - shows your balance, and amount of owned shares")
+                print("invest - invest in to the Fleshflip Bankroll")
+                print("stake - shows the stake of your investment")
+                print("stats - show the stats")
+                print("")
+                print("--- MISC ---")
+                print("help - show this page")
+                print("faucet - get free 1000 bits added to your balance")
+                mode = None
         #BUY HOUSE COMMISSIONS
             
         if mode == "hcbuy":
                 hcamount = input("How much house commission would you like to buy? (100K BITS EACH)")
                 
-        #CHECK TO SEE IF BALANCE IS ENOUGH FOR A COINFLIP GAME
-        try:
-                if mode == "tails" or mode == "heads":
-                        if(int(bet) > int(balance)):
-                                    print ("Not enough balance")
-                                    mode = None
-                        else:
-                                balance = int(balance) - int(bet)
-
-        except(ValueError):
-                print("Refrain from using letters, or other symbols, when asked for a numerical value.")
-                
         #DETERMINES THE SIDE THE COIN LANDS ON
         highorlow = random.uniform(1,100)
-
-        if mode == "tails" or mode =="heads":
-                print ("The side you chose was",mode)
 
         #BALANCE TEXT
         if mode == "balance":
@@ -97,6 +80,27 @@ while game_started == True:
 
         #COINFLIP GAME
         try:
+                maxBet = bankroll * 0.75/100
+                if mode == "tails" or mode == "heads":
+                    bet = input("Input your chosen bet size: ")
+                else:
+                    print("")
+
+                if mode == "tails" or mode == "heads":
+                        if(int(bet) > int(balance)):
+                                    print ("Not enough balance")
+                                    mode = None
+                        else:
+                                balance = int(balance) - int(bet)
+
+                if (int(bet)> int(maxBet)):
+                        print("You cannot bet more than ",maxBet," bits")
+                        bet = 0
+                        mode = None
+                        
+                if mode == "tails" or mode =="heads":
+                        print ("The side you chose was",mode)
+                                
                 if mode == "heads":
                     if highorlow > 50:
                         print("The coin flipped Heads") 
@@ -223,4 +227,86 @@ while game_started == True:
                 print("Percentage", percentOfStake * 100,"%")
                 print("Investment Profit: ",investProfit)
                 mode = None
+        if mode == "crash":
+                crashmultiplier = random.random()
+
+                crashmultiplier = 0.99/(1-crashmultiplier)
+
+                crashmultiplier = max(crashmultiplier,1.0)
+                crashmultiplier = math.floor(crashmultiplier*100)/100
                 
+                crashbet = int(input("Input your chosen bet size: "))
+                if(crashbet > balance):
+                        print("Not enough balance")
+                        mode = None
+                else:
+                        multi = float(input("Input your chosen cashout point: "))
+                        crashmp = (bankroll * 0.75/100) / multi
+
+                        if (crashbet <= crashmp):
+                                balance = int(balance) - int(crashbet)
+                                crashWin = int(crashbet)*multi
+                                if crashmultiplier > multi:
+                                    print ("The game busted at", crashmultiplier)
+                                    print ("You won!,",crashWin," bits")
+                                    balance = balance + int(crashWin)
+                                    bankroll = bankroll - crashWin
+                                gameProfit = int(crashbet) * float(percentOfStake)
+                                investedAmount = int(investedAmount) - int(gameProfit)
+                                investProfit = investProfit - gameProfit
+                                gameProfit = 0
+                                mode = None
+                                if crashmultiplier < multi:
+                                    print ("The game busted at", crashmultiplier)
+                                    print ("You lost!")
+                                gameProfit = int(crashbet) * float(percentOfStake)
+                                investedAmount = int(investedAmount) + int(gameProfit)
+                                investProfit = investProfit + gameProfit
+                                gameProfit = 0
+                                mode = None
+                        else:
+                                print("Your bet is higher than the max bet which is ,",crashmp," bits")
+                                mode = None
+        if mode == "dice":
+                diceBet = int(input("Input your chosen bet size: "))
+                if(diceBet > balance):
+                        print("Not enough balance")
+                        mode = None
+                else:
+                        diceMulti = int(input("Choose a number between 1 to 100: "))
+                        diceWin = diceBet * diceMulti - diceBet*0.03
+                        maxDiceBet = (bankroll * 0.75/100) / diceMulti
+                        minDiceBet = 2
+                        if diceBet > minDiceBet:
+                                if maxDiceBet >= diceBet:
+                                        balance = balance - diceBet
+                                        randomMulti = random.randint(1,diceMulti)
+                                        bankroll = bankroll - diceWin
+                                        print("The dice rolled ",randomMulti)
+                                        if diceMulti == randomMulti:
+                                           print ("You won!,",diceWin," bits")
+                                           balance = balance + int(diceWin)
+                                           gameProfit = int(diceBet) * float(percentOfStake)
+                                           investedAmount = int(investedAmount) - int(gameProfit)
+                                           investProfit = investProfit - gameProfit
+                                           gameProfit = 0
+                                        if (int(hcamount) > 0):
+                                                hcShare = int(diceBet) * 0.03
+                                                balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
+                                        else:
+                                                print("You lost!")
+                                                gameProfit = int(diceBet) * float(percentOfStake)
+                                                investedAmount = int(investedAmount) + int(gameProfit)
+                                                investProfit = investProfit + gameProfit
+                                                gameProfit = 0
+                                        if (int(hcamount) > 0):
+                                                hcShare = int(diceBet) * 0.03
+                                                balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
+                                        mode = None
+                                else:
+                                        print("Your bet is higher than the max bet which is ,",maxDiceBet," bits")
+                                        mode = None
+                        else:
+                                print("The minimum dice multiplier is 2")
+                                mode = None
+                        
