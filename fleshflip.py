@@ -42,7 +42,7 @@ print("Show the list of commands by inputting 'help'")
 while game_started == True:
         
         #STARTUP   
-        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake", "crash", "dice"):
+        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake", "crash", "dice", "rps"):
                 mode = input("> ")
         if mode == "help":
                 print("Commands: ")
@@ -56,6 +56,8 @@ while game_started == True:
                 print("--- DICE ---")
                 print("dice - pick a multiplier from 1 to 1000 (no decimals)")
                 print("")
+                print("--- RPS ---")
+                print("rps - choose between rock paper and scissors")
                 print("--- BANKROLL ---")
                 print("balance - shows your balance, and amount of owned shares")
                 print("invest - invest in to the Fleshflip Bankroll")
@@ -227,86 +229,144 @@ while game_started == True:
                 print("Percentage", percentOfStake * 100,"%")
                 print("Investment Profit: ",investProfit)
                 mode = None
-        if mode == "crash":
-                crashmultiplier = random.random()
+        try:
+                if mode == "crash":
+                        crashmultiplier = random.random()
 
-                crashmultiplier = 0.99/(1-crashmultiplier)
+                        crashmultiplier = 0.99/(1-crashmultiplier)
 
-                crashmultiplier = max(crashmultiplier,1.0)
-                crashmultiplier = math.floor(crashmultiplier*100)/100
-                
-                crashbet = int(input("Input your chosen bet size: "))
-                if(crashbet > balance):
-                        print("Not enough balance")
-                        mode = None
-                else:
-                        multi = float(input("Input your chosen cashout point: "))
-                        crashmp = (bankroll * 0.75/100) / multi
-
-                        if (crashbet <= crashmp):
-                                balance = int(balance) - int(crashbet)
-                                crashWin = int(crashbet)*multi
-                                if crashmultiplier > multi:
-                                    print ("The game busted at", crashmultiplier)
-                                    print ("You won!,",crashWin," bits")
-                                    balance = balance + int(crashWin)
-                                    bankroll = bankroll - crashWin
-                                gameProfit = int(crashbet) * float(percentOfStake)
-                                investedAmount = int(investedAmount) - int(gameProfit)
-                                investProfit = investProfit - gameProfit
-                                gameProfit = 0
-                                mode = None
-                                if crashmultiplier < multi:
-                                    print ("The game busted at", crashmultiplier)
-                                    print ("You lost!")
-                                gameProfit = int(crashbet) * float(percentOfStake)
-                                investedAmount = int(investedAmount) + int(gameProfit)
-                                investProfit = investProfit + gameProfit
-                                gameProfit = 0
+                        crashmultiplier = max(crashmultiplier,1.0)
+                        crashmultiplier = math.floor(crashmultiplier*100)/100
+                        
+                        crashbet = int(input("Input your chosen bet size: "))
+                        if(crashbet > balance):
+                                print("Not enough balance")
                                 mode = None
                         else:
-                                print("Your bet is higher than the max bet which is ,",crashmp," bits")
-                                mode = None
-        if mode == "dice":
-                diceBet = int(input("Input your chosen bet size: "))
-                if(diceBet > balance):
-                        print("Not enough balance")
-                        mode = None
-                else:
-                        diceMulti = int(input("Choose a number between 1 to 100: "))
-                        diceWin = diceBet * diceMulti - diceBet*0.03
-                        maxDiceBet = (bankroll * 0.75/100) / diceMulti
-                        minDiceBet = 2
-                        if diceBet > minDiceBet:
-                                if maxDiceBet >= diceBet:
-                                        balance = balance - diceBet
-                                        randomMulti = random.randint(1,diceMulti)
-                                        bankroll = bankroll - diceWin
-                                        print("The dice rolled ",randomMulti)
-                                        if diceMulti == randomMulti:
-                                           print ("You won!,",diceWin," bits")
-                                           balance = balance + int(diceWin)
-                                           gameProfit = int(diceBet) * float(percentOfStake)
-                                           investedAmount = int(investedAmount) - int(gameProfit)
-                                           investProfit = investProfit - gameProfit
-                                           gameProfit = 0
-                                        if (int(hcamount) > 0):
-                                                hcShare = int(diceBet) * 0.03
-                                                balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
-                                        else:
-                                                print("You lost!")
-                                                gameProfit = int(diceBet) * float(percentOfStake)
-                                                investedAmount = int(investedAmount) + int(gameProfit)
-                                                investProfit = investProfit + gameProfit
-                                                gameProfit = 0
-                                        if (int(hcamount) > 0):
-                                                hcShare = int(diceBet) * 0.03
-                                                balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
+                                multi = float(input("Input your chosen cashout point: "))
+                                crashmp = (bankroll * 0.75/100) / multi
+
+                                if (crashbet <= crashmp):
+                                        balance = int(balance) - int(crashbet)
+                                        crashWin = int(crashbet)*multi
+                                        if crashmultiplier > multi:
+                                            print ("The game busted at", crashmultiplier)
+                                            print ("You won!,",crashWin," bits")
+                                            balance = balance + int(crashWin)
+                                            bankroll = bankroll - crashWin
+                                        gameProfit = int(crashbet) * float(percentOfStake)
+                                        investedAmount = int(investedAmount) - int(gameProfit)
+                                        investProfit = investProfit - gameProfit
+                                        gameProfit = 0
+                                        mode = None
+                                        if crashmultiplier < multi:
+                                            print ("The game busted at", crashmultiplier)
+                                            print ("You lost!")
+                                        gameProfit = int(crashbet) * float(percentOfStake)
+                                        investedAmount = int(investedAmount) + int(gameProfit)
+                                        investProfit = investProfit + gameProfit
+                                        gameProfit = 0
                                         mode = None
                                 else:
-                                        print("Your bet is higher than the max bet which is ,",maxDiceBet," bits")
+                                        print("Your bet is higher than the max bet which is ,",crashmp," bits")
                                         mode = None
-                        else:
-                                print("The minimum dice multiplier is 2")
+        except(ValueError):
+                print("Refrain from using letters, or other symbols, when asked for a numerical value.")
+        try:
+                if mode == "dice":
+                        diceBet = int(input("Input your chosen bet size: "))
+                        if(diceBet > balance):
+                                print("Not enough balance")
                                 mode = None
+                        else:
+                                diceMulti = int(input("Choose a number between 1 to 100: "))
+                                diceWin = diceBet * diceMulti - diceBet*0.03
+                                maxDiceBet = (bankroll * 0.75/100) / diceMulti
+                                minDiceBet = 2
+                                if diceBet > minDiceBet:
+                                        if maxDiceBet >= diceBet:
+                                                balance = balance - diceBet
+                                                randomMulti = random.randint(1,diceMulti)
+                                                bankroll = bankroll - diceWin
+                                                print("The dice rolled ",randomMulti)
+                                                if diceMulti == randomMulti:
+                                                   print ("You won!,",diceWin," bits")
+                                                   balance = balance + int(diceWin)
+                                                   gameProfit = int(diceBet) * float(percentOfStake)
+                                                   investedAmount = int(investedAmount) - int(gameProfit)
+                                                   investProfit = investProfit - gameProfit
+                                                   gameProfit = 0
+                                                if (int(hcamount) > 0):
+                                                        hcShare = int(diceBet) * 0.03
+                                                        balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
+                                                else:
+                                                        print("You lost!")
+                                                        gameProfit = int(diceBet) * float(percentOfStake)
+                                                        investedAmount = int(investedAmount) + int(gameProfit)
+                                                        investProfit = investProfit + gameProfit
+                                                        gameProfit = 0
+                                                if (int(hcamount) > 0):
+                                                        hcShare = int(diceBet) * 0.03
+                                                        balance = int(balance)+ int(hcShare) * float(int(hcamount)/int(maxHC))
+                                                mode = None
+                                        else:
+                                                print("Your bet is higher than the max bet which is ,",maxDiceBet," bits")
+                                                mode = None
+                                else:
+                                        print("The minimum dice multiplier is 2")
+                                        mode = None
+        except(ValueError):
+                print("Refrain from using letters, or other symbols, when asked for a numerical value.")
+        try:
+                if mode == "rps":
+                        rpsBET = input("Input your chosen bet size: ")
+                        maxRPSBet = bankroll * 0.75/100
+                        userChoice = input("Choose between, rock, paper, and scissors:(EXACTLY) ")
+                        botChoice = random.choice(["rock", "paper", "scissors"])
+                        balance = int(balance) - int(rpsBET)
+                        if(userChoice == botChoice):
+                                print("You chose, ",userChoice,)
+                                print("Bot chose, ",botChoice,)
+                                print("You tied.")
+                                balance = int(balance) + int(rpsBET)
+                                mode = None
+                        if(userChoice == "rock"):
+                                if(botChoice == "paper"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You lost")
+                                        mode = None
+                                elif (botChoice == "scissors"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You won")
+                                        balance = int(balance) + int(rpsBET)*1.97
+                                        mode = None
+                        if(userChoice == "paper"):
+                                if(botChoice == "scissors"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You lost")
+                                        mode = None
+                                elif (botChoice == "rock"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You won")
+                                        balance = int(balance) + int(rpsBET)*1.97
+                                        mode = None
+                        if(userChoice == "scissors"):
+                                if(botChoice == "rock"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You lose")
+                                        mode = None
+                                elif (botChoice == "paper"):
+                                        print("You chose, ",userChoice,)
+                                        print("Bot chose, ",botChoice,)
+                                        print("You won")
+                                        balance = int(balance) + int(rpsBET)*1.97
+                                        mode = None
+        except(ValueError):
+                print("Refrain from using letters, or other symbols, when asked for a numerical value.")
+                mode = None
                         
