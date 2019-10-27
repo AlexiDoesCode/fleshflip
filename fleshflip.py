@@ -1,7 +1,7 @@
 import random
 import sys
 import math
-
+import pickle
 
 #coinflip
 bet = 0
@@ -42,7 +42,7 @@ print("Show the list of commands by inputting 'help'")
 while game_started == True:
         
         #STARTUP   
-        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake", "crash", "dice", "rps"):
+        while mode not in ("heads", "tails", "balance", "faucet", "hcbuy", "give","exit", "invest", "stats","help","stake", "crash", "dice", "rps", "listscammer", "save","load", "divest"):
                 mode = input("> ")
         if mode == "help":
                 print("Commands: ")
@@ -61,15 +61,44 @@ while game_started == True:
                 print("--- BANKROLL ---")
                 print("balance - shows your balance, and amount of owned shares")
                 print("invest - invest in to the Fleshflip Bankroll")
+                print("divest - divest from the Fleshflip Bankroll")
                 print("stake - shows the stake of your investment")
                 print("stats - show the stats")
                 print("")
                 print("--- MISC ---")
                 print("help - show this page")
                 print("faucet - get free 1000 bits added to your balance")
+                print("listscammer - list all scammers")
+                print("--- SAVE & LOAD ---")
+                print("save - save your game to a .pickle file")
+                print("load - load your .pickle file")
+                mode = None
+
+        if mode == "divest":
+                amountToDivest = input("Amount To Divest: ")
+                investedAmount = int(investedAmount) - int(amountToDivest)
+                bankroll = int(bankroll) - int(amountToDivest)
+
+                mode = None
+        if mode == "listscammer":
+                print("--- MASTER SCAMMER LIST ---")
+                print("")
+                print("1. Jade - Beamed 550 BITS")
+                print("2. ??? - Beamed 250 BITS")
+                print("3. str9 - Beamed 2302 BITS")
+                print("4. ??? - Not Beamed 30000 BITS")
+                print(" '???' names are hidden to protect their identities.")
                 mode = None
         #BUY HOUSE COMMISSIONS
-            
+
+        if mode == "save":
+                with open('fleshflip.pickle', 'wb') as f:
+                    pickle.dump([balance, hcbalance, hcamount, currentHC, bankroll, investedAmount, investProfit], f)
+                mode = None
+        if mode == "load":
+                with open('fleshflip.pickle', 'rb') as f:
+                       balance, hcbalance, hcamount, currentHC, bankroll, investedAmount, investProfit = pickle.load(f)
+                mode = None
         if mode == "hcbuy":
                 hcamount = input("How much house commission would you like to buy? (100K BITS EACH)")
                 
@@ -79,7 +108,6 @@ while game_started == True:
         #BALANCE TEXT
         if mode == "balance":
                 print ("Your balance is:")
-
         #COINFLIP GAME
         try:
                 maxBet = bankroll * 0.75/100
@@ -209,7 +237,6 @@ while game_started == True:
 
         if mode == "exit":
                 sys.exit(0)
-                
         if mode == "stats":
                 print("Bankroll: ",bankroll)
                 print("Bought House Commissions: ",currentHC)
@@ -369,4 +396,3 @@ while game_started == True:
         except(ValueError):
                 print("Refrain from using letters, or other symbols, when asked for a numerical value.")
                 mode = None
-                        
